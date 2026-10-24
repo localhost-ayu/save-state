@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Backlog",
-    short_name: "Backlog",
+    name: "Save State",
+    short_name: "Save State",
     description: "Diário pessoal de jogos",
     start_url: "/library",
     display: "standalone",

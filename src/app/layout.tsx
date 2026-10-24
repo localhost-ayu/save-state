@@ -8,9 +8,9 @@ const heading = Space_Grotesk({ variable: "--font-heading", subsets: ["latin"] }
 
 export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.NEXT_PUBLIC_SITE_URL),
-  title: { default: "Backlog", template: "%s · Backlog" },
+  title: { default: "Save State", template: "%s · Save State" },
   description: "Diário pessoal de jogos: biblioteca, progresso, troféus e memórias.",
-  appleWebApp: { capable: true, title: "Backlog", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "Save State", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {

@@ -1,7 +1,9 @@
 {
-  "name": "backlog",
+  "name": "save-state",
   "version": "0.1.0",
   "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "Nathã Grazzioli <natha@grazzioli.dev> (https://github.com/localhost-ayu)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

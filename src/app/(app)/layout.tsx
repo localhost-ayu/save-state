@@ -15,7 +15,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-4 px-4">
           <Link href="/library" className="font-display font-semibold">
-            Backlog
+            Save State
           </Link>
           <nav className="flex flex-1 gap-1 overflow-x-auto">
             {NAV.map((item) => (
