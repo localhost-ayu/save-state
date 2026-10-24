@@ -23,47 +23,7 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "external_account_tokens": {
-                  Row: {
-                    "access_token": string,"access_token_expires_at": string,"external_account_id": string,"refresh_token": string,"refresh_token_expires_at": string,"updated_at": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "access_token": string,"access_token_expires_at": string,"external_account_id": string,"refresh_token": string,"refresh_token_expires_at": string,"updated_at"?: string
-                  }
-                  Update: {
-                    "access_token"?: string,"access_token_expires_at"?: string,"external_account_id"?: string,"refresh_token"?: string,"refresh_token_expires_at"?: string,"updated_at"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "external_account_tokens_external_account_id_fkey"
-      columns: ["external_account_id"]
-isOneToOne: true
-      referencedRelation: "external_accounts"
-      referencedColumns: ["id"]
-    }
-                  ]
-                },"external_accounts": {
-                  Row: {
-                    "avatar_url": string | null,"created_at": string,"display_name": string | null,"external_user_id": string,"id": string,"last_synced_at": string | null,"provider": Database["public"]['Enums']["external_provider"],"updated_at": string,"user_id": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "avatar_url"?: string | null,"created_at"?: string,"display_name"?: string | null,"external_user_id": string,"id"?: string,"last_synced_at"?: string | null,"provider": Database["public"]['Enums']["external_provider"],"updated_at"?: string,"user_id"?: string
-                  }
-                  Update: {
-                    "avatar_url"?: string | null,"created_at"?: string,"display_name"?: string | null,"external_user_id"?: string,"id"?: string,"last_synced_at"?: string | null,"provider"?: Database["public"]['Enums']["external_provider"],"updated_at"?: string,"user_id"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "external_accounts_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
-                  ]
-                },"games": {
+            "games": {
                   Row: {
                     "cover_url": string | null,"created_at": string,"created_by": string | null,"franchise": string | null,"genres": (string)[],"id": string,"igdb_id": number | null,"platforms": (string)[],"release_date": string | null,"slug": string | null,"source": Database["public"]['Enums']["game_source"],"summary": string | null,"title": string,"updated_at": string
                   }
@@ -175,32 +135,6 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
-                },"psn_titles": {
-                  Row: {
-                    "defined_bronze": number,"defined_gold": number,"defined_platinum": number,"defined_silver": number,"earned_bronze": number,"earned_gold": number,"earned_platinum": number,"earned_silver": number,"first_played_at": string | null,"icon_url": string | null,"id": string,"last_played_at": string | null,"last_trophy_at": string | null,"library_entry_id": string | null,"link_status": Database["public"]['Enums']["link_status"],"name": string,"np_communication_id": string,"np_service_name": string,"platforms": (string)[],"play_duration_seconds": number | null,"progress": number,"synced_at": string,"title_ids": (string)[],"user_id": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "defined_bronze"?: number,"defined_gold"?: number,"defined_platinum"?: number,"defined_silver"?: number,"earned_bronze"?: number,"earned_gold"?: number,"earned_platinum"?: number,"earned_silver"?: number,"first_played_at"?: string | null,"icon_url"?: string | null,"id"?: string,"last_played_at"?: string | null,"last_trophy_at"?: string | null,"library_entry_id"?: string | null,"link_status"?: Database["public"]['Enums']["link_status"],"name": string,"np_communication_id": string,"np_service_name": string,"platforms"?: (string)[],"play_duration_seconds"?: number | null,"progress"?: number,"synced_at"?: string,"title_ids"?: (string)[],"user_id": string
-                  }
-                  Update: {
-                    "defined_bronze"?: number,"defined_gold"?: number,"defined_platinum"?: number,"defined_silver"?: number,"earned_bronze"?: number,"earned_gold"?: number,"earned_platinum"?: number,"earned_silver"?: number,"first_played_at"?: string | null,"icon_url"?: string | null,"id"?: string,"last_played_at"?: string | null,"last_trophy_at"?: string | null,"library_entry_id"?: string | null,"link_status"?: Database["public"]['Enums']["link_status"],"name"?: string,"np_communication_id"?: string,"np_service_name"?: string,"platforms"?: (string)[],"play_duration_seconds"?: number | null,"progress"?: number,"synced_at"?: string,"title_ids"?: (string)[],"user_id"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "psn_titles_library_entry_id_fkey"
-      columns: ["library_entry_id"]
-isOneToOne: false
-      referencedRelation: "library_entries"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "psn_titles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
-                  ]
                 },"reviews": {
                   Row: {
                     "body": string,"created_at": string,"is_private": boolean,"library_entry_id": string,"updated_at": string,"user_id": string
@@ -259,26 +193,6 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"sync_runs": {
-                  Row: {
-                    "error": string | null,"finished_at": string | null,"id": string,"provider": Database["public"]['Enums']["external_provider"],"started_at": string,"stats": NonNullable<Json>,"status": Database["public"]['Enums']["sync_status"],"user_id": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "error"?: string | null,"finished_at"?: string | null,"id"?: string,"provider": Database["public"]['Enums']["external_provider"],"started_at"?: string,"stats"?: NonNullable<Json>,"status"?: Database["public"]['Enums']["sync_status"],"user_id": string
-                  }
-                  Update: {
-                    "error"?: string | null,"finished_at"?: string | null,"id"?: string,"provider"?: Database["public"]['Enums']["external_provider"],"started_at"?: string,"stats"?: NonNullable<Json>,"status"?: Database["public"]['Enums']["sync_status"],"user_id"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "sync_runs_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
-                  ]
                 }
           }
           Views: {
@@ -293,7 +207,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "date_precision": "day"|"month"|"year","external_provider": "psn"|"steam"|"retroachievements"|"xbox","game_source": "igdb"|"manual","game_status": "backlog"|"playing"|"paused"|"shelved"|"dropped"|"completed","link_status": "pending"|"linked"|"needs_review"|"ignored","ownership_type": "physical"|"digital"|"borrowed"|"alternative"|"subscription","sync_status": "running"|"success"|"partial"|"failed"
+            "date_precision": "day"|"month"|"year","game_source": "igdb"|"manual","game_status": "backlog"|"playing"|"paused"|"shelved"|"dropped"|"completed","ownership_type": "physical"|"digital"|"borrowed"|"alternative"|"subscription"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -413,7 +327,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "date_precision": ["day", "month", "year"],"external_provider": ["psn", "steam", "retroachievements", "xbox"],"game_source": ["igdb", "manual"],"game_status": ["backlog", "playing", "paused", "shelved", "dropped", "completed"],"link_status": ["pending", "linked", "needs_review", "ignored"],"ownership_type": ["physical", "digital", "borrowed", "alternative", "subscription"],"sync_status": ["running", "success", "partial", "failed"]
+            "date_precision": ["day", "month", "year"],"game_source": ["igdb", "manual"],"game_status": ["backlog", "playing", "paused", "shelved", "dropped", "completed"],"ownership_type": ["physical", "digital", "borrowed", "alternative", "subscription"]
           }
         }
 } as const

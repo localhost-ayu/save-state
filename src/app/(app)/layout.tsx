@@ -6,7 +6,6 @@ const NAV = [
   { href: "/library", label: "Biblioteca" },
   { href: "/board", label: "Kanban" },
   { href: "/timeline", label: "Linha do tempo" },
-  { href: "/settings", label: "Ajustes" },
 ] as const;
 
 export default function AppLayout({ children }: LayoutProps<"/">) {

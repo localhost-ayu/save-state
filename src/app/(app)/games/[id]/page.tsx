@@ -7,8 +7,6 @@ import { ReviewEditor } from "@/features/journal/components/review-editor";
 import { EntryEditor } from "@/features/library/components/entry-editor";
 import { getEntryDetail } from "@/features/library/queries";
 import { PlaythroughSection } from "@/features/playthroughs/components/playthrough-section";
-import { TrophyProgress } from "@/features/psn/components/trophy-progress";
-import { getPsnTitlesForEntry } from "@/features/psn/queries";
 import { todayIso } from "@/lib/dates";
 
 async function GameDetail({ params }: PageProps<"/games/[id]">) {
@@ -16,7 +14,6 @@ async function GameDetail({ params }: PageProps<"/games/[id]">) {
   const entry = await getEntryDetail(id);
   if (!entry) notFound();
 
-  const psnTitles = await getPsnTitlesForEntry(entry.id);
   const { game } = entry;
 
   return (
@@ -29,9 +26,6 @@ async function GameDetail({ params }: PageProps<"/games/[id]">) {
             <div className="flex h-full items-center justify-center p-4 text-center text-muted">{game.title}</div>
           )}
         </div>
-        {psnTitles.map((title) => (
-          <TrophyProgress key={title.id} title={title} />
-        ))}
       </aside>
 
       <div className="flex min-w-0 flex-col gap-8">

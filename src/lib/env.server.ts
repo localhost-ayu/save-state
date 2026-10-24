@@ -3,7 +3,6 @@ import { z } from "zod";
 
 const serverSchema = z.object({
   SUPABASE_SECRET_KEY: z.string().min(1),
-  CRON_SECRET: z.string().min(16),
   IGDB_CLIENT_ID: z.string().optional(),
   IGDB_CLIENT_SECRET: z.string().optional(),
 });

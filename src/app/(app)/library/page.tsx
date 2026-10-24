@@ -1,28 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { GAME_STATUSES } from "@/features/library/constants";
 import { AddGame } from "@/features/library/components/add-game";
 import { GameCard } from "@/features/library/components/game-card";
 import { LibraryFilters } from "@/features/library/components/library-filters";
 import { getLibrary } from "@/features/library/queries";
-import { getPsnReviewQueue } from "@/features/psn/queries";
 import type { GameStatus } from "@/types/database";
 
 export const metadata: Metadata = { title: "Biblioteca" };
 
 function parseStatus(value: unknown): GameStatus | undefined {
   return GAME_STATUSES.find((status) => status === value);
-}
-
-async function PsnReviewBanner() {
-  const { titles } = await getPsnReviewQueue();
-  if (titles.length === 0) return null;
-  return (
-    <Link href="/library/psn" className="rounded-card bg-surface-raised p-3 text-sm hover:bg-border">
-      {titles.length} {titles.length === 1 ? "jogo importado" : "jogos importados"} da PSN para revisar →
-    </Link>
-  );
 }
 
 async function Library({ searchParams }: PageProps<"/library">) {
@@ -54,9 +42,6 @@ export default function LibraryPage(props: PageProps<"/library">) {
     <div className="flex flex-col gap-6">
       <h1 className="font-display text-2xl font-semibold">Biblioteca</h1>
       <AddGame />
-      <Suspense fallback={null}>
-        <PsnReviewBanner />
-      </Suspense>
       <Suspense fallback={<p className="text-muted">Carregando…</p>}>
         <Library {...props} />
       </Suspense>
