@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { BottomNav, DesktopNav, MobileSectionTitle } from "@/components/app-nav";
 import { ThemeBackdrop, ThemeStyle } from "@/features/appearance/components/theme-style";
 import { getMyTheme } from "@/features/appearance/queries";
 import { ProfileMenu } from "@/features/profile/components/profile-menu";
 import { getMyProfileSummary } from "@/features/profile/queries";
-
-const NAV = [
-  { href: "/library", label: "Biblioteca" },
-  { href: "/board", label: "Kanban" },
-  { href: "/timeline", label: "Linha do tempo" },
-  { href: "/roulette", label: "Roleta" },
-] as const;
 
 async function UserTheme() {
   const theme = await getMyTheme();
@@ -32,12 +26,11 @@ async function UserMenu() {
 
 function SaveIcon() {
   return (
-    <span
-      aria-hidden="true"
-      className="flex h-7 w-6 items-end justify-center rounded-[4px] border-2 border-accent pb-1"
-    >
-      <span className="h-1.5 w-3 rounded-[1px] bg-accent" />
-    </span>
+    <svg viewBox="0 0 28 28" aria-hidden="true" className="size-7">
+      <path d="M5 3h14l4 4v18H5z" fill="var(--accent)" />
+      <path d="M9 3v6h8V3" fill="none" stroke="var(--accent-contrast)" strokeWidth="2" />
+      <rect x="9" y="15" width="10" height="6" rx="1" fill="var(--accent-contrast)" />
+    </svg>
   );
 }
 
@@ -48,28 +41,20 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
         <UserTheme />
       </Suspense>
       <header className="sticky top-0 z-20 border-x-0 border-t-0 surface text-text">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
-          <Link href="/library" className="flex items-center gap-2.5 font-display text-lg font-bold tracking-wide">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-3 px-4 sm:h-16 sm:gap-6">
+          <Link href="/library" aria-label="Save State, ir para a biblioteca" className="flex items-center gap-2.5">
             <SaveIcon />
-            <span className="hidden sm:inline">Save State</span>
+            <span className="hidden font-display text-lg font-bold sm:inline">Save State</span>
           </Link>
-          <nav aria-label="Principal" className="flex flex-1 gap-1 overflow-x-auto">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-control px-3 py-2 text-sm whitespace-nowrap text-muted hover:bg-surface-raised hover:text-text"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <MobileSectionTitle />
+          <DesktopNav />
           <Suspense fallback={<span aria-hidden="true" className="size-11 rounded-pill bg-surface-raised" />}>
             <UserMenu />
           </Suspense>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">{children}</main>
+      <BottomNav />
     </div>
   );
 }
