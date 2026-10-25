@@ -8,7 +8,18 @@ import { cn } from "@/lib/cn";
 import { mediaUrl } from "@/lib/media";
 import { saveTheme } from "../actions";
 import { THEME_PRESETS } from "../presets";
-import { DEFAULT_THEME, FONT_OPTIONS, cssVarsToRule, themeToCssVars, type FontOption, type Theme } from "../theme";
+import { contrastRatio, mix, readableOn } from "../color";
+import {
+  DEFAULT_THEME,
+  FONT_OPTIONS,
+  accentFill,
+  cssVarsToRule,
+  minimumSurfaceOpacity,
+  themeToCssVars,
+  type FontOption,
+  type Theme,
+} from "../theme";
+import { ColorPicker, type ContrastCheck } from "./color-picker";
 import { ThemeBackdrop } from "./theme-style";
 
 const LIVE_STYLE_ID = "theme-live-preview";
@@ -28,19 +39,6 @@ function Field({ label, children, hint }: { label: string; children: ReactNode; 
       </span>
       {children}
     </label>
-  );
-}
-
-function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
-  return (
-    <Field label={label} hint={value.toUpperCase()}>
-      <input
-        type="color"
-        value={value}
-        onChange={(event) => onChange(event.target.value.toUpperCase())}
-        className="h-11 w-full cursor-pointer rounded-control border border-border bg-surface-solid p-1"
-      />
-    </Field>
   );
 }
 
@@ -98,6 +96,70 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
     setTheme((current) => ({ ...current, [key]: value }));
   }
 
+  function remember(hex: string) {
+    setTheme((current) => ({
+      ...current,
+      recentColors: [hex, ...current.recentColors.filter((color) => color.toUpperCase() !== hex.toUpperCase())].slice(
+        0,
+        6,
+      ),
+    }));
+  }
+
+  const cardBackdrop = mix(theme.background.color, theme.surface.color, theme.surface.opacity / 100);
+  const themeColors = [
+    { label: "Destaque do tema", color: theme.accent },
+    { label: "Fundo do tema", color: theme.background.color },
+    { label: "Card do tema", color: theme.surface.color },
+  ];
+
+  const accentChecks = (hex: string): ContrastCheck[] => {
+    const fill = accentFill(hex);
+    const onCard = contrastRatio(hex, cardBackdrop);
+    const onBackground = contrastRatio(hex, theme.background.color);
+    return [
+      {
+        ok: true,
+        label: "Texto no botão legível (ajustado automaticamente)",
+        ratio: contrastRatio(fill.fill, fill.text),
+      },
+      {
+        ok: onCard >= 4.5,
+        label: onCard >= 4.5 ? "Links legíveis sobre os cards" : "Links sobre os cards serão clareados para ler",
+        ratio: onCard,
+      },
+      {
+        ok: onBackground >= 3,
+        label: onBackground >= 3 ? "Destaque visível sobre o fundo" : "Pouco visível sobre o fundo",
+        ratio: onBackground,
+      },
+    ];
+  };
+
+  const surfaceChecks = (hex: string): ContrastCheck[] => {
+    const ratio = contrastRatio(readableOn(hex), hex);
+    const minimum = minimumSurfaceOpacity({ ...theme, surface: { ...theme.surface, color: hex } });
+    return [
+      { ok: ratio >= 4.5, label: "Texto dos cards legível", ratio },
+      ...(minimum ? [{ ok: false, label: `Com a imagem, use opacidade de pelo menos ${minimum}%`, ratio: ratio }] : []),
+    ];
+  };
+
+  const backgroundChecks = (hex: string): ContrastCheck[] => {
+    const ratio = contrastRatio(readableOn(hex), hex);
+    const separation = contrastRatio(hex, theme.surface.color);
+    return [
+      { ok: ratio >= 4.5, label: "Títulos sobre o fundo legíveis", ratio },
+      {
+        ok: separation >= 1.15,
+        label: separation >= 1.15 ? "Cards se destacam do fundo" : "Cards quase iguais ao fundo",
+        ratio: separation,
+      },
+    ];
+  };
+
+  const minimumOpacity = minimumSurfaceOpacity(theme);
+
   function save() {
     startTransition(async () => {
       const result = await saveTheme(theme);
@@ -133,7 +195,7 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
                 onClick={() =>
                   setTheme({ ...preset.theme, background: { ...preset.theme.background, imagePath: backgroundImage } })
                 }
-                className="flex items-center gap-2 rounded-pill border border-border px-3 py-2 text-sm hover:border-accent"
+                className="flex items-center gap-2 rounded-pill border border-border-strong px-3 py-2 text-sm hover:border-accent"
               >
                 <span
                   aria-hidden="true"
@@ -150,10 +212,17 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
 
         <Section title="Fundo da visão imersiva">
           <div className="grid gap-4 sm:grid-cols-2">
-            <ColorField
+            <ColorPicker
               label="Cor de fundo"
               value={theme.background.color}
-              onChange={(color) => update("background", { ...theme.background, color })}
+              onChange={(color) =>
+                setTheme((current) => ({ ...current, background: { ...current.background, color } }))
+              }
+              onCommit={remember}
+              checks={backgroundChecks}
+              preview="page"
+              themeColors={themeColors}
+              recentColors={theme.recentColors}
             />
             <div className="flex flex-col gap-1.5 text-sm">
               Imagem de fundo
@@ -196,10 +265,15 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
 
         <Section title="Cards e menus">
           <div className="grid gap-4 sm:grid-cols-2">
-            <ColorField
+            <ColorPicker
               label="Cor dos cards"
               value={theme.surface.color}
-              onChange={(color) => update("surface", { ...theme.surface, color })}
+              onChange={(color) => setTheme((current) => ({ ...current, surface: { ...current.surface, color } }))}
+              onCommit={remember}
+              checks={surfaceChecks}
+              preview="card"
+              themeColors={themeColors}
+              recentColors={theme.recentColors}
             />
             <Range
               label="Opacidade"
@@ -210,6 +284,23 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
               onChange={(opacity) => update("surface", { ...theme.surface, opacity })}
             />
           </div>
+          {minimumOpacity && (
+            <div
+              role="status"
+              className="flex flex-wrap items-center gap-3 rounded-control bg-surface-raised px-3 py-2.5 text-sm"
+            >
+              <span className="flex-1">
+                Com a imagem de fundo, o texto dos cards pode ficar ilegível em partes claras. Sugestão: opacidade de
+                pelo menos {minimumOpacity}%.
+              </span>
+              <Button
+                variant="secondary"
+                onClick={() => update("surface", { ...theme.surface, opacity: minimumOpacity })}
+              >
+                Usar {minimumOpacity}%
+              </Button>
+            </div>
+          )}
           <label className="flex items-center gap-3 text-sm">
             <input
               type="checkbox"
@@ -248,7 +339,7 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
                   type="button"
                   aria-pressed={theme.radius === preset.value}
                   onClick={() => update("radius", preset.value)}
-                  className="border border-border px-3 py-1.5 text-sm aria-pressed:border-accent aria-pressed:text-accent"
+                  className="border border-border px-3 py-1.5 text-sm aria-pressed:border-accent-text aria-pressed:text-accent-text"
                   style={{ borderRadius: preset.value }}
                 >
                   {preset.label}
@@ -256,7 +347,15 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
               ))}
             </div>
           </div>
-          <ColorField label="Cor de destaque" value={theme.accent} onChange={(accent) => update("accent", accent)} />
+          <ColorPicker
+            label="Cor de destaque"
+            value={theme.accent}
+            onChange={(accent) => setTheme((current) => ({ ...current, accent }))}
+            onCommit={remember}
+            checks={accentChecks}
+            themeColors={themeColors}
+            recentColors={theme.recentColors}
+          />
         </Section>
 
         <Section title="Tipografia">
@@ -293,7 +392,7 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
             <span className="font-label text-[11px] tracking-[0.08em] text-muted uppercase">Slot 01 · PS5</span>
             <span className="font-display font-medium">Persona 5 Royal</span>
             <span className="self-start rounded-control border border-border px-2 py-0.5 font-label text-[11px] uppercase">
-              Iniciado
+              Jogando
             </span>
           </div>
         </div>
@@ -317,7 +416,7 @@ export function AppearanceForm({ saved }: { saved: Theme }) {
             </Button>
           </div>
           {message && (
-            <p role="status" className={cn("text-sm", message.ok ? "text-muted" : "text-red-400")}>
+            <p role="status" className={cn("text-sm", message.ok ? "text-muted" : "font-medium text-text")}>
               {message.text}
             </p>
           )}

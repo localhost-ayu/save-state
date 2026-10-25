@@ -10,7 +10,7 @@ export default function HomePage() {
       <div>
         <Link
           href="/library"
-          className="inline-flex h-11 items-center rounded-control bg-accent px-5 font-medium text-accent-contrast"
+          className="inline-flex h-11 items-center rounded-control bg-accent-fill px-5 font-medium text-accent-fill-contrast"
         >
           Abrir biblioteca
         </Link>

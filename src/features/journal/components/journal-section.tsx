@@ -57,7 +57,7 @@ export function JournalSection({
           onChange={(event) => setBody(event.target.value)}
           rows={4}
           placeholder="Onde parei, o que senti, o que aconteceu…"
-          className="w-full rounded-control border border-border bg-surface-solid p-3 text-sm text-text focus-visible:outline-2 focus-visible:outline-accent"
+          className="w-full rounded-control border border-border-strong bg-surface-solid p-3 text-sm text-text"
         />
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm">
@@ -68,7 +68,7 @@ export function JournalSection({
             Registrar
           </Button>
           {error && (
-            <span role="alert" className="text-sm text-red-500">
+            <span role="alert" className="text-sm font-medium text-text">
               {error}
             </span>
           )}

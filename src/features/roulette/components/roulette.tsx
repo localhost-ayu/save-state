@@ -70,7 +70,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
   function start(entry: LibraryEntry) {
     startTransition(async () => {
       const response = await updateEntry({ id: entry.id, status: "playing" });
-      setMessage(response.ok ? "Boa aventura! O jogo foi marcado como Iniciado." : response.error);
+      setMessage(response.ok ? "Boa aventura! O jogo foi para Jogando." : response.error);
     });
   }
 
@@ -89,7 +89,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
                 aria-pressed={statuses.includes(status)}
                 onClick={() => toggleStatus(status)}
                 disabled={spinning}
-                className="rounded-pill border border-border px-3 py-1.5 text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+                className="rounded-pill border border-border-strong px-3 py-1.5 text-sm aria-pressed:border-accent-fill aria-pressed:bg-accent-fill aria-pressed:text-accent-fill-contrast"
               >
                 {STATUS_LABELS[status]}
               </button>
@@ -103,7 +103,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
             value={platform ?? ""}
             onChange={(event) => setPlatform(event.target.value || null)}
             disabled={spinning}
-            className="h-10 rounded-control border border-border bg-surface-solid px-2 text-text"
+            className="h-10 rounded-control border border-border-strong bg-surface-solid px-2 text-text"
           >
             <option value="">Todas</option>
             {platforms.map((value) => (
@@ -134,7 +134,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
             {candidates.map((entry) => (
               <li
                 key={entry.id}
-                className={cn("flex items-center gap-3 py-2", highlight?.id === entry.id && "text-accent")}
+                className={cn("flex items-center gap-3 py-2", highlight?.id === entry.id && "text-accent-text")}
               >
                 <span className="min-w-0 flex-1 truncate">{entry.game.title}</span>
                 <span className="text-xs text-muted">{PRIORITY_LABELS[entry.priority]}</span>
@@ -164,7 +164,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
               className={cn("w-56 rounded-card transition", spinning && "scale-95 opacity-80")}
             />
             <div className="flex flex-col items-center gap-2">
-              <span className="font-label text-xs tracking-[0.08em] text-accent uppercase">
+              <span className="font-label text-xs tracking-[0.08em] text-accent-text uppercase">
                 {result ? "Sua próxima aventura" : "…"}
               </span>
               <h2 className="font-display text-2xl font-bold">{shown.game.title}</h2>

@@ -19,7 +19,7 @@ export function LoginForm({ next }: { next?: string }) {
         {pending ? "Enviando…" : "Receber link de acesso"}
       </Button>
       {state.message && (
-        <p role="status" className={state.status === "error" ? "text-sm text-red-500" : "text-sm text-muted"}>
+        <p role="status" className={state.status === "error" ? "text-sm font-medium text-text" : "text-sm text-muted"}>
           {state.message}
         </p>
       )}

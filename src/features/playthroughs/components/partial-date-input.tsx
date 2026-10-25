@@ -44,7 +44,7 @@ export function PartialDateInput({
           aria-label={`Precisão: ${label}`}
           value={value.precision}
           onChange={(event) => changePrecision(event.target.value as DatePrecision)}
-          className="h-10 rounded-control border border-border bg-surface-solid px-2 text-sm text-text"
+          className="h-10 rounded-control border border-border-strong bg-surface-solid px-2 text-sm text-text"
         >
           {(Object.keys(PRECISION_LABELS) as DatePrecision[]).map((precision) => (
             <option key={precision} value={precision}>

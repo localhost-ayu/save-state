@@ -53,7 +53,7 @@ export function CoverEditor({ entryId, title, coverUrl, customCoverPath }: Props
         )}
       </div>
       {error && (
-        <p role="alert" className="text-sm text-red-400">
+        <p role="alert" className="text-sm font-medium text-text">
           {error}
         </p>
       )}

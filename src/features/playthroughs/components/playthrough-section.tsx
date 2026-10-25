@@ -122,7 +122,7 @@ export function PlaythroughSection({ entryId, playthroughs }: { entryId: string;
               <select
                 value={outcome}
                 onChange={(event) => setOutcome(event.target.value as typeof outcome)}
-                className="h-10 rounded-control border border-border bg-surface-solid px-2 text-text"
+                className="h-10 rounded-control border border-border-strong bg-surface-solid px-2 text-text"
               >
                 <option value="">Em andamento / sem resultado</option>
                 <option value="completed">Finalizado</option>
@@ -140,7 +140,7 @@ export function PlaythroughSection({ entryId, playthroughs }: { entryId: string;
             </label>
           </div>
           {error && (
-            <p role="alert" className="text-sm text-red-400">
+            <p role="alert" className="text-sm font-medium text-text">
               {error}
             </p>
           )}

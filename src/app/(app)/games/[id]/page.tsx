@@ -81,7 +81,7 @@ async function GameDetail({ params }: PageProps<"/games/[id]">) {
 
 export default function GamePage(props: PageProps<"/games/[id]">) {
   return (
-    <Suspense fallback={<p className="text-page/70">Carregando…</p>}>
+    <Suspense fallback={<p className="self-start rounded-control scrim px-3 py-2 text-page">Carregando…</p>}>
       <GameDetail {...props} />
     </Suspense>
   );

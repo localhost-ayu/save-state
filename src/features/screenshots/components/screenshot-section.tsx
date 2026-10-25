@@ -29,7 +29,7 @@ function JournalSelect({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-10 rounded-control border border-border bg-surface-solid px-2 text-text"
+        className="h-10 rounded-control border border-border-strong bg-surface-solid px-2 text-text"
       >
         <option value="">Nenhum</option>
         {options.map((option) => (
@@ -97,7 +97,7 @@ function Lightbox({
             value={caption}
             onChange={(event) => setCaption(event.target.value)}
             rows={2}
-            className="rounded-control border border-border bg-surface-solid p-2 text-text"
+            className="rounded-control border border-border-strong bg-surface-solid p-2 text-text"
           />
         </label>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -108,7 +108,7 @@ function Lightbox({
           </label>
         </div>
         {error && (
-          <p role="alert" className="text-sm text-red-400">
+          <p role="alert" className="text-sm font-medium text-text">
             {error}
           </p>
         )}
@@ -197,7 +197,7 @@ export function ScreenshotSection({
               <button
                 type="button"
                 onClick={() => setSelected(shot)}
-                className="group flex w-full flex-col gap-1.5 text-left focus-visible:outline-2 focus-visible:outline-accent"
+                className="group flex w-full flex-col gap-1.5 text-left"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

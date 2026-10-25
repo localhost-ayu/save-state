@@ -3,14 +3,20 @@
 @theme inline {
   --color-background: var(--background);
   --color-page: var(--page-text);
+  --color-page-muted: var(--page-muted);
   --color-surface: var(--surface);
   --color-surface-solid: var(--surface-solid);
   --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);
   --color-accent-contrast: var(--accent-contrast);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-contrast: var(--accent-fill-contrast);
+  --color-accent-text: var(--accent-text);
+  --color-focus: var(--focus-ring);
   --color-platinum: #c9d8ea;
   --radius-card: var(--card-radius);
   --radius-control: calc(var(--card-radius) * 0.6);
@@ -20,6 +26,7 @@
   --font-label: var(--font-mono);
 }
 
+/* Cards and menus: text uses --text / --text-muted. */
 @utility surface {
   background-color: var(--surface);
   border: 1px solid var(--border);
@@ -27,7 +34,26 @@
   backdrop-filter: blur(var(--glass-blur));
 }
 
+/* Tray behind small text that sits on the page background: text uses --page-text / --page-muted. */
+@utility scrim {
+  background-color: var(--page-scrim);
+  -webkit-backdrop-filter: blur(var(--scrim-blur));
+  backdrop-filter: blur(var(--scrim-blur));
+}
+
 body {
   background: var(--background);
   color: var(--page-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--surface-solid);
+}
+
+@media (max-width: 639px) {
+  body:has([data-bottom-nav]) {
+    padding-bottom: 5.5rem;
+  }
 }
