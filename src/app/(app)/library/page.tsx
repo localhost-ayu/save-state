@@ -27,9 +27,9 @@ async function Library({ searchParams }: PageProps<"/library">) {
           {status || search ? "Nenhum jogo com esses filtros." : "Sua biblioteca está vazia. Busque um jogo acima."}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-          {entries.map((entry) => (
-            <GameCard key={entry.id} entry={entry} />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entries.map((entry, index) => (
+            <GameCard key={entry.id} entry={entry} slot={index + 1} />
           ))}
         </div>
       )}
@@ -40,7 +40,10 @@ async function Library({ searchParams }: PageProps<"/library">) {
 export default function LibraryPage(props: PageProps<"/library">) {
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold">Biblioteca</h1>
+      <div className="flex items-baseline justify-between gap-4">
+        <h1 className="font-display text-3xl font-bold">Memory Card</h1>
+        <span className="font-label text-xs tracking-[0.08em] text-page/70 uppercase">Biblioteca</span>
+      </div>
       <AddGame />
       <Suspense fallback={<p className="text-muted">Carregando…</p>}>
         <Library {...props} />

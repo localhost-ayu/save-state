@@ -9,7 +9,7 @@ async function LoginFormWithRedirect({ searchParams }: PageProps<"/login">) {
   return (
     <>
       {error === "auth" && (
-        <p role="alert" className="rounded-lg bg-surface-raised p-3 text-sm">
+        <p role="alert" className="rounded-control bg-surface-raised p-3 text-sm">
           O link de acesso é inválido ou já foi usado. Peça um novo abaixo e abra o link mais recente.
         </p>
       )}

@@ -4,7 +4,7 @@ import { publicEnv } from "@/lib/env";
 import type { Database } from "@/types/database";
 import { AUTH_COOKIE_NAME, serverSupabaseUrl } from "./config";
 
-const PROTECTED_PREFIXES = ["/library", "/board", "/timeline", "/games"];
+const PROTECTED_PREFIXES = ["/library", "/board", "/timeline", "/games", "/roulette", "/settings"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });

@@ -30,7 +30,7 @@ export function ReviewEditor({ entryId, review }: { entryId: string; review: Rev
         onChange={(event) => setBody(event.target.value)}
         rows={8}
         placeholder="O que você achou do jogo?"
-        className="w-full rounded-lg border border-border bg-surface p-3 text-sm leading-relaxed focus-visible:outline-2 focus-visible:outline-accent"
+        className="w-full rounded-control border border-border bg-surface-solid p-3 text-sm leading-relaxed text-text focus-visible:outline-2 focus-visible:outline-accent"
       />
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-sm">

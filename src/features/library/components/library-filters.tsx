@@ -27,7 +27,7 @@ export function LibraryFilters({ status, search }: { status?: GameStatus; search
           defaultValue={search}
           placeholder="Filtrar por título…"
           aria-label="Filtrar por título"
-          className="h-10 w-full max-w-sm rounded-lg border border-border bg-surface px-3 text-sm"
+          className="h-10 w-full max-w-sm rounded-control border border-border bg-surface-solid px-3 text-sm text-text"
         />
       </form>
       <nav aria-label="Filtrar por status" className="flex flex-wrap gap-2">
@@ -37,7 +37,7 @@ export function LibraryFilters({ status, search }: { status?: GameStatus; search
             href={href(chip.value, search)}
             aria-current={chip.value === status ? "page" : undefined}
             className={cn(
-              "rounded-full border border-border px-3 py-1 text-sm",
+              "rounded-pill border border-border px-3 py-1 text-sm",
               chip.value === status ? "border-accent bg-accent text-accent-contrast" : "text-muted hover:text-text",
             )}
           >

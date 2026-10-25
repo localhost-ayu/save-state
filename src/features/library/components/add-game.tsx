@@ -37,7 +37,7 @@ export function AddGame() {
   }
 
   return (
-    <section className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
+    <section className="flex flex-col gap-3 rounded-card surface p-4 text-text">
       <form onSubmit={search} className="flex gap-2">
         <Input
           value={term}

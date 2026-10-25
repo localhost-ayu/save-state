@@ -19,7 +19,7 @@ async function Timeline({ searchParams }: PageProps<"/timeline">) {
   const total = daysInYear(year);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 rounded-card surface p-5 text-text">
       <div className="flex items-center gap-3">
         <Link href={`/timeline?year=${year - 1}`} className="text-muted hover:text-text" aria-label="Ano anterior">
           ←
