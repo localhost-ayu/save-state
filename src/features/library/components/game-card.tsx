@@ -6,34 +6,41 @@ import { StatusBadge } from "./status-badge";
 
 export function GameCard({ entry, slot }: { entry: LibraryEntry; slot: number }) {
   const { game } = entry;
+  const meta = [entry.platform, game.release_date?.slice(0, 4)].filter(Boolean).join(" · ");
 
   return (
     <Link
       href={`/games/${entry.id}`}
-      className="group flex gap-4 rounded-card surface p-3.5 text-text transition hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      className="group flex flex-col gap-2 rounded-card surface p-2 text-text transition hover:border-border-strong"
     >
-      <GameCover
-        title={game.title}
-        coverUrl={game.cover_url}
-        customCoverPath={entry.custom_cover_path}
-        sizes="80px"
-        className="w-[4.5rem] rounded-control"
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <span className="font-label text-[11px] tracking-[0.08em] text-muted uppercase">
-          Slot {String(slot).padStart(2, "0")}
-          {entry.platform && ` · ${entry.platform}`}
+      <div className="relative">
+        <GameCover
+          title={game.title}
+          coverUrl={game.cover_url}
+          customCoverPath={entry.custom_cover_path}
+          platform={entry.platform}
+          sizes="(min-width: 1024px) 190px, (min-width: 640px) 30vw, 45vw"
+          className="w-full rounded-[calc(var(--card-radius)*0.6)]"
+        />
+        <span className="absolute top-1.5 left-1.5 rounded-[4px] bg-black/60 px-1.5 py-0.5 font-label text-[10px] tracking-[0.08em] text-white">
+          SLOT {String(slot).padStart(2, "0")}
         </span>
-        <h3 className="line-clamp-2 leading-tight font-medium">{game.title}</h3>
-        <div className="mt-auto flex flex-wrap items-center gap-2">
+        {entry.is_platinum && (
+          <span
+            className="absolute top-1.5 right-1.5 rounded-full bg-black/60 p-1 text-platinum"
+            aria-label="Platinado"
+          >
+            <PlatinumTrophy className="size-3.5" />
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-1 px-1 pb-1">
+        <h3 className="truncate font-display text-[15px] leading-tight font-semibold">{game.title}</h3>
+        {meta && <span className="font-label text-[11px] text-muted">{meta}</span>}
+        <div className="flex items-center gap-2">
           <StatusBadge status={entry.status} />
-          {entry.is_platinum && (
-            <span className="inline-flex items-center gap-1 text-xs text-platinum">
-              <PlatinumTrophy className="size-3.5" /> Platinado
-            </span>
-          )}
           {entry.is_favorite && (
-            <span className="text-xs text-accent" aria-label="Favorito">
+            <span className="text-xs text-accent-text" aria-label="Favorito">
               ★
             </span>
           )}

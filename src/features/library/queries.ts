@@ -5,10 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 import type { GameStatus } from "@/types/database";
 
 const ENTRY_FIELDS = `
-  id, status, platform, ownership, rating, is_platinum, is_favorite, priority,
+  id, status, status_changed_at, platform, ownership, rating, is_platinum, is_favorite, priority,
   expectation, custom_cover_path, cover_crop, board_position, updated_at,
   game:games!inner(id, title, cover_url, release_date, platforms),
-  playthroughs(started_on, started_precision, finished_on, hours)
+  playthroughs(started_on, started_precision, finished_on, finished_precision, hours)
 `;
 
 export type LibraryFilters = { status?: GameStatus; search?: string };

@@ -6,16 +6,25 @@ type Props = {
   title: string;
   coverUrl: string | null;
   customCoverPath?: string | null;
+  platform?: string | null;
   sizes: string;
   className?: string;
   priority?: boolean;
 };
 
-export function GameCover({ title, coverUrl, customCoverPath, sizes, className, priority }: Props) {
+function monogram(title: string) {
+  const words = title
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  return (words.length > 1 ? words[0][0] + words[1][0] : title.slice(0, 2)).toUpperCase();
+}
+
+export function GameCover({ title, coverUrl, customCoverPath, platform, sizes, className, priority }: Props) {
   const src = customCoverPath ? mediaUrl(customCoverPath) : coverUrl;
 
   return (
-    <div className={cn("relative aspect-[3/4] shrink-0 overflow-hidden bg-surface-raised", className)}>
+    <div className={cn("@container relative aspect-[3/4] shrink-0 overflow-hidden bg-surface-raised", className)}>
       {src ? (
         <Image
           src={src}
@@ -27,8 +36,11 @@ export function GameCover({ title, coverUrl, customCoverPath, sizes, className, 
           className="object-cover"
         />
       ) : (
-        <div className="flex h-full items-center justify-center p-2 text-center font-display text-2xl font-bold text-muted">
-          {title.slice(0, 1)}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-[inherit] border border-dashed border-border-strong p-1 text-center">
+          <span className="font-display text-[clamp(0.75rem,30cqw,2rem)] leading-none font-bold text-text">
+            {monogram(title)}
+          </span>
+          {platform && <span className="hidden font-label text-[10px] text-muted @[3rem]:block">{platform}</span>}
         </div>
       )}
     </div>

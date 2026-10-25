@@ -11,7 +11,7 @@ export const GAME_STATUSES = [
 
 export const STATUS_LABELS: Record<GameStatus, string> = {
   backlog: "Backlog",
-  playing: "Iniciado",
+  playing: "Jogando",
   paused: "Pausado",
   shelved: "Congelado",
   dropped: "Abandonado",

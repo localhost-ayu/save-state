@@ -1,50 +1,71 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import type { GameStatus } from "@/types/database";
 import { GAME_STATUSES, STATUS_LABELS } from "../constants";
+import { CheckIcon } from "./status-icon";
 
-function href(status: GameStatus | undefined, search: string | undefined): Route {
+export type LibraryFilter = (typeof GAME_STATUSES)[number] | "platinum";
+
+function href(filter: LibraryFilter | undefined, search: string | undefined): Route {
   const params = new URLSearchParams();
-  if (status) params.set("status", status);
+  if (filter) params.set("status", filter);
   if (search) params.set("q", search);
   const query = params.toString();
   return (query ? `/library?${query}` : "/library") as Route;
 }
 
-export function LibraryFilters({ status, search }: { status?: GameStatus; search?: string }) {
-  const chips: Array<{ value: GameStatus | undefined; label: string }> = [
-    { value: undefined, label: "Todos" },
-    ...GAME_STATUSES.map((value) => ({ value, label: STATUS_LABELS[value] })),
+export function LibraryFilters({
+  filter,
+  search,
+  counts,
+}: {
+  filter?: LibraryFilter;
+  search?: string;
+  counts: Record<LibraryFilter | "all", number>;
+}) {
+  const chips: Array<{ value: LibraryFilter | undefined; label: string; count: number }> = [
+    { value: undefined, label: "Todos", count: counts.all },
+    ...GAME_STATUSES.map((value) => ({ value, label: STATUS_LABELS[value], count: counts[value] })),
+    { value: "platinum", label: "Platinado", count: counts.platinum },
   ];
 
   return (
-    <div className="flex flex-col gap-3">
-      <form action="/library" className="flex gap-2">
-        {status && <input type="hidden" name="status" value={status} />}
+    <div className="flex flex-wrap items-center gap-2">
+      <nav aria-label="Filtrar por status" className="flex flex-1 flex-wrap gap-2">
+        {chips.map((chip) => {
+          const active = chip.value === filter;
+          return (
+            <Link
+              key={chip.label}
+              href={href(chip.value, search)}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-1.5 rounded-pill px-3.5 text-sm",
+                active
+                  ? "bg-accent-fill font-semibold text-accent-fill-contrast"
+                  : "border border-border-strong bg-surface-solid text-text hover:bg-surface-raised",
+              )}
+            >
+              {active && <CheckIcon />}
+              {chip.label}
+              <span className="font-label text-xs opacity-80">{chip.count}</span>
+            </Link>
+          );
+        })}
+      </nav>
+      <form action="/library" className="w-full sm:w-56">
+        {filter && <input type="hidden" name="status" value={filter} />}
+        <label className="sr-only" htmlFor="library-title-filter">
+          Filtrar por título
+        </label>
         <input
+          id="library-title-filter"
           name="q"
           defaultValue={search}
           placeholder="Filtrar por título…"
-          aria-label="Filtrar por título"
-          className="h-10 w-full max-w-sm rounded-control border border-border bg-surface-solid px-3 text-sm text-text"
+          className="h-11 w-full rounded-control border border-border-strong bg-surface-solid px-3 text-sm text-text placeholder:text-muted"
         />
       </form>
-      <nav aria-label="Filtrar por status" className="flex flex-wrap gap-2">
-        {chips.map((chip) => (
-          <Link
-            key={chip.label}
-            href={href(chip.value, search)}
-            aria-current={chip.value === status ? "page" : undefined}
-            className={cn(
-              "rounded-pill border border-border px-3 py-1 text-sm",
-              chip.value === status ? "border-accent bg-accent text-accent-contrast" : "text-muted hover:text-text",
-            )}
-          >
-            {chip.label}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }

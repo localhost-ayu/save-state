@@ -51,7 +51,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               type="button"
               aria-pressed={entry.status === status}
               onClick={() => save({ status })}
-              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+              className="rounded-pill border border-border-strong px-3 py-1 text-sm aria-pressed:border-accent-fill aria-pressed:bg-accent-fill aria-pressed:text-accent-fill-contrast"
             >
               {STATUS_LABELS[status]}
             </button>
@@ -69,7 +69,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               aria-pressed={entry.expectation === value}
               aria-label={`Expectativa ${value} de 10`}
               onClick={() => save({ expectation: entry.expectation === value ? null : value })}
-              className="size-9 rounded-control border border-border font-label text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+              className="size-11 rounded-control border border-border-strong font-label text-sm aria-pressed:border-accent-fill aria-pressed:bg-accent-fill aria-pressed:text-accent-fill-contrast"
             >
               {value}
             </button>
@@ -87,7 +87,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               type="button"
               aria-pressed={entry.priority === priority}
               onClick={() => save({ priority })}
-              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:text-accent"
+              className="rounded-pill border border-border-strong px-3 py-1 text-sm aria-pressed:border-accent-text aria-pressed:text-accent-text"
             >
               {label}
             </button>
@@ -104,7 +104,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               type="button"
               aria-pressed={entry.ownership.includes(type)}
               onClick={() => toggleOwnership(type)}
-              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:text-accent"
+              className="rounded-pill border border-border-strong px-3 py-1 text-sm aria-pressed:border-accent-text aria-pressed:text-accent-text"
             >
               {OWNERSHIP_LABELS[type]}
             </button>
@@ -168,7 +168,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-500">
+        <p role="alert" className="text-sm font-medium text-text">
           {error}
         </p>
       )}
