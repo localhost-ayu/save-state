@@ -71,14 +71,14 @@ isOneToOne: false
                   ]
                 },"library_entries": {
                   Row: {
-                    "board_position": number,"cover_crop": Json | null,"created_at": string,"custom_cover_path": string | null,"expectation": number | null,"game_id": string,"id": string,"is_favorite": boolean,"is_platinum": boolean,"ownership": (Database["public"]['Enums']["ownership_type"])[],"platform": string | null,"priority": number,"rating": number | null,"status": Database["public"]['Enums']["game_status"],"status_changed_at": string,"updated_at": string,"user_id": string
+                    "board_position": number,"cover_crop": Json | null,"created_at": string,"custom_cover_path": string | null,"expectation": number | null,"favorite_position": number | null,"game_id": string,"id": string,"is_favorite": boolean,"is_platinum": boolean,"ownership": (Database["public"]['Enums']["ownership_type"])[],"platform": string | null,"priority": number,"rating": number | null,"status": Database["public"]['Enums']["game_status"],"status_changed_at": string,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"game_id": string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
+                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"favorite_position"?: number | null,"game_id": string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
                   }
                   Update: {
-                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"game_id"?: string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
+                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"favorite_position"?: number | null,"game_id"?: string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {

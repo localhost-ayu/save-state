@@ -7,13 +7,16 @@ import { mediaUrl } from "@/lib/media";
 import type { PublicProfile, PublicProfileEntry } from "../queries";
 import type { ProfileSectionId } from "../sections";
 
-function Block({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
+const MONTHS = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+
+function Block({ index, title, children }: { index: number; title: string; children: ReactNode }) {
+  const id = `section-${index}`;
   return (
-    <section className="flex flex-col gap-4 rounded-card surface p-5 text-text">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="font-display text-xl font-bold">{title}</h2>
-        {aside}
-      </div>
+    <section aria-labelledby={id} className="flex flex-col gap-3.5 rounded-card surface p-5 text-text">
+      <h2 id={id} className="flex items-center gap-2 font-label text-xs font-bold tracking-[0.12em] uppercase">
+        <span className="text-muted">{String(index).padStart(2, "0")}</span>
+        {title}
+      </h2>
       {children}
     </section>
   );
@@ -25,66 +28,95 @@ function Cover({ entry, sizes, className }: { entry: PublicProfileEntry; sizes: 
       title={entry.game.title}
       coverUrl={entry.game.cover_url}
       customCoverPath={entry.custom_cover_path}
+      platform={entry.platform}
       sizes={sizes}
       className={className}
     />
   );
 }
 
-function NowPlaying({ data }: { data: PublicProfile }) {
+function relativeDay(date: string, today: string) {
+  const days = Math.round((Date.parse(today) - Date.parse(date)) / 86_400_000);
+  if (days <= 0) return "HOJE";
+  if (days === 1) return "ONTEM";
+  if (days < 30) return `${days} DIAS ATRÁS`;
+  return formatPartialDate({ date, precision: "day" }).toUpperCase();
+}
+
+type SectionProps = { data: PublicProfile; index: number; today: string };
+
+function NowPlaying({ data, index, today }: SectionProps) {
   const entry = data.nowPlaying;
   if (!entry) return null;
+  const meta = [
+    entry.platform,
+    `desde ${formatPartialDate({ date: entry.status_changed_at.slice(0, 10), precision: "day" })}`,
+    entry.currentHours > 0 && `${formatHours(entry.currentHours)} nesta jornada`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <section className="flex items-center gap-5 rounded-card border-accent surface p-5 text-text">
-      <Cover entry={entry} sizes="112px" className="w-28 rounded-control" />
-      <div className="flex min-w-0 flex-col gap-1.5">
-        <span className="font-label text-xs tracking-[0.08em] text-accent uppercase">● Jogando agora</span>
-        <h2 className="font-display text-2xl leading-tight font-bold">{entry.game.title}</h2>
-        <span className="text-sm text-muted">
-          {[
-            entry.platform,
-            `desde ${formatPartialDate({ date: entry.status_changed_at.slice(0, 10), precision: "day" })}`,
-          ]
-            .filter(Boolean)
-            .join(" · ")}
-        </span>
+    <section
+      aria-labelledby="now-playing"
+      className="flex flex-col gap-5 rounded-card surface p-5 text-text sm:flex-row"
+    >
+      <Cover
+        entry={entry}
+        sizes="120px"
+        className="w-28 self-start rounded-[calc(var(--card-radius)*0.6)] sm:w-[7.5rem]"
+      />
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <h2
+          id="now-playing"
+          className="flex items-center gap-2 font-label text-xs font-bold tracking-[0.12em] text-accent-text uppercase"
+        >
+          <span className="text-muted">{String(index).padStart(2, "0")}</span>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="size-3">
+            <path d="M7 5v14l12-7z" />
+          </svg>
+          Jogando agora
+        </h2>
+        <p className="font-display text-2xl leading-tight font-bold sm:text-[1.75rem]">{entry.game.title}</p>
+        <p className="font-label text-[13px] text-muted">{meta}</p>
+        {entry.lastNote && (
+          <blockquote className="mt-2 rounded-control bg-surface-raised px-3.5 py-3 text-[15px] leading-relaxed">
+            <p className="line-clamp-3">“{entry.lastNote.body}”</p>
+            <footer className="mt-1.5 font-label text-[11px] text-muted">
+              DIÁRIO · {relativeDay(entry.lastNote.entry_date, today)}
+            </footer>
+          </blockquote>
+        )}
       </div>
     </section>
   );
 }
 
-function Favorites({ data }: { data: PublicProfile }) {
-  if (data.favorites.length === 0) return null;
-  return (
-    <Block title="Favoritos">
-      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {data.favorites.map((entry) => (
-          <li key={entry.id} className="flex flex-col gap-2">
-            <Cover entry={entry} sizes="180px" className="rounded-card" />
-            <span className="text-sm font-medium">{entry.game.title}</span>
-          </li>
-        ))}
-      </ul>
-    </Block>
-  );
-}
-
-function YearStats({ data }: { data: PublicProfile }) {
+function YearStats({ data, index }: SectionProps) {
+  const hint = "registre numa jornada";
   const tiles = [
-    { label: `Horas em ${data.year}`, value: formatHours(data.stats.hoursYear) },
-    { label: "Horas no total", value: formatHours(data.stats.hoursTotal) },
-    { label: `Finalizados em ${data.year}`, value: data.stats.finished },
-    { label: "Platinas", value: data.stats.platinums },
-    { label: "Jogando", value: data.stats.playing },
-    { label: "No backlog", value: data.stats.backlog },
+    { label: `Horas em ${data.year}`, value: data.stats.hoursYear ? formatHours(data.stats.hoursYear) : null },
+    { label: "Horas no total", value: data.stats.hoursTotal ? formatHours(data.stats.hoursTotal) : null },
+    { label: `Finalizados em ${data.year}`, value: String(data.stats.finished) },
+    { label: "Platinas", value: String(data.stats.platinums) },
+    { label: "Jogando", value: String(data.stats.playing) },
+    { label: "No backlog", value: String(data.stats.backlog) },
   ];
   return (
-    <Block title="Números">
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <Block index={index} title={`Números de ${data.year}`}>
+      <dl className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {tiles.map((tile) => (
-          <div key={tile.label} className="flex flex-col gap-1 rounded-control bg-surface-raised p-4">
-            <dd className="font-display text-3xl font-bold">{tile.value}</dd>
-            <dt className="text-xs text-muted">{tile.label}</dt>
+          <div
+            key={tile.label}
+            className="flex flex-col-reverse gap-0.5 rounded-[calc(var(--card-radius)*0.6)] bg-surface-raised p-3.5"
+          >
+            <dt className="text-[13px] text-muted">
+              {tile.label}
+              {!tile.value && data.isOwner && ` · ${hint}`}
+            </dt>
+            <dd className={`font-display text-[1.75rem] font-bold ${tile.value ? "" : "text-muted"}`}>
+              {tile.value ?? "—"}
+            </dd>
           </div>
         ))}
       </dl>
@@ -92,52 +124,92 @@ function YearStats({ data }: { data: PublicProfile }) {
   );
 }
 
-function FinishedYear({ data }: { data: PublicProfile }) {
+function Favorites({ data, index }: SectionProps) {
+  if (data.favorites.length === 0) return null;
+  return (
+    <Block index={index} title="Favoritos de sempre">
+      <ol className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+        {data.favorites.map((entry, position) => (
+          <li key={entry.id} className="flex min-w-0 flex-col gap-1.5">
+            <div className="relative">
+              <Cover entry={entry} sizes="180px" className="w-full rounded-[calc(var(--card-radius)*0.6)]" />
+              <span className="absolute top-1.5 left-1.5 rounded-[4px] bg-black/60 px-1.5 py-0.5 font-label text-[10px] text-white">
+                #{position + 1}
+              </span>
+            </div>
+            <span className="truncate text-[13px] font-semibold">{entry.game.title}</span>
+          </li>
+        ))}
+      </ol>
+    </Block>
+  );
+}
+
+function FinishedYear({ data, index }: SectionProps) {
   if (data.finishedYear.length === 0) return null;
   return (
-    <Block title={`Finalizados em ${data.year}`}>
-      <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-        {data.finishedYear.map((entry) => (
-          <li key={entry.id} className="relative" title={entry.game.title}>
-            <Cover entry={entry} sizes="120px" className="rounded-control" />
-            {entry.is_platinum && (
-              <span className="absolute top-1.5 right-1.5 rounded-pill bg-black/60 p-1 text-platinum">
-                <PlatinumTrophy className="size-3.5" />
-              </span>
-            )}
-            <span className="sr-only">{entry.game.title}</span>
-          </li>
-        ))}
+    <Block index={index} title={`Finalizados em ${data.year}`}>
+      <ul className="flex flex-col">
+        {data.finishedYear.map((entry) => {
+          const month = entry.finishedOn ? MONTHS[Number(entry.finishedOn.slice(5, 7)) - 1] : null;
+          const details = [
+            month,
+            entry.hours > 0 && formatHours(entry.hours).toUpperCase(),
+            entry.is_platinum && "PLATINADO",
+          ]
+            .filter(Boolean)
+            .join(" · ");
+          return (
+            <li key={entry.id} className="flex min-h-13 items-center gap-3 py-1.5">
+              <Cover entry={entry} sizes="30px" className="w-[30px] rounded-[4px]" />
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="flex items-center gap-1.5 truncate text-[15px] font-semibold">
+                  {entry.game.title}
+                  {entry.is_platinum && <PlatinumTrophy className="size-3.5 shrink-0 text-platinum" />}
+                </span>
+                {details && <span className="font-label text-[11px] text-muted">{details}</span>}
+              </div>
+              {entry.rating !== null && (
+                <span className="font-label text-sm font-bold">{String(entry.rating).replace(".", ",")}/10</span>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </Block>
   );
 }
 
-function Reviews({ data }: { data: PublicProfile }) {
-  if (data.reviews.length === 0) return null;
+function Reviews({ data, index }: SectionProps) {
+  const [latest, ...others] = data.reviews;
+  if (!latest) return null;
   return (
-    <Block title="Reviews recentes">
-      <ul className="flex flex-col gap-3">
-        {data.reviews.map((review) => (
-          <li key={review.entry.id} className="flex flex-col gap-1.5 rounded-control bg-surface-raised p-4">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="font-medium">{review.entry.game.title}</h3>
-              <time className="text-xs text-muted" dateTime={review.updated_at}>
-                {formatPartialDate({ date: review.updated_at.slice(0, 10), precision: "day" })}
-              </time>
-            </div>
-            <p className="line-clamp-4 text-sm whitespace-pre-line text-muted">{review.body}</p>
-          </li>
-        ))}
-      </ul>
+    <Block index={index} title="Reviews recentes">
+      <article className="flex flex-col gap-2">
+        <h3 className="font-display text-lg font-bold">{latest.entry.game.title}</h3>
+        <p className="line-clamp-5 text-[15px] leading-relaxed whitespace-pre-line">{latest.body}</p>
+        <time className="font-label text-[11px] text-muted" dateTime={latest.updated_at}>
+          {formatPartialDate({ date: latest.updated_at.slice(0, 10), precision: "day" }).toUpperCase()}
+        </time>
+      </article>
+      {others.length > 0 && (
+        <ul className="flex flex-col gap-2 border-t border-border pt-3">
+          {others.map((review) => (
+            <li key={review.entry.id} className="flex flex-col gap-0.5">
+              <span className="text-sm font-semibold">{review.entry.game.title}</span>
+              <span className="line-clamp-2 text-sm text-muted">{review.body}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </Block>
   );
 }
 
-function Gallery({ data }: { data: PublicProfile }) {
+function Gallery({ data, index }: SectionProps) {
   if (data.gallery.length === 0) return null;
   return (
-    <Block title="Galeria">
+    <Block index={index} title="Galeria">
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {data.gallery.map((shot) => (
           <li key={shot.id} className="flex flex-col gap-1.5">
@@ -156,7 +228,7 @@ function Gallery({ data }: { data: PublicProfile }) {
   );
 }
 
-const RENDERERS: Record<ProfileSectionId, (props: { data: PublicProfile }) => ReactNode> = {
+const RENDERERS: Record<ProfileSectionId, (props: SectionProps) => ReactNode> = {
   now_playing: NowPlaying,
   favorites: Favorites,
   year_stats: YearStats,
@@ -165,11 +237,20 @@ const RENDERERS: Record<ProfileSectionId, (props: { data: PublicProfile }) => Re
   gallery: Gallery,
 };
 
-export function ProfileSections({ data }: { data: PublicProfile }) {
+const HAS_CONTENT: Record<ProfileSectionId, (data: PublicProfile) => boolean> = {
+  now_playing: (data) => Boolean(data.nowPlaying),
+  favorites: (data) => data.favorites.length > 0,
+  year_stats: () => true,
+  finished_year: (data) => data.finishedYear.length > 0,
+  reviews: (data) => data.reviews.length > 0,
+  gallery: (data) => data.gallery.length > 0,
+};
+
+export function ProfileSections({ data, today }: { data: PublicProfile; today: string }) {
   return data.profile.sections
-    .filter((section) => section.visible)
-    .map((section) => {
+    .filter((section) => section.visible && HAS_CONTENT[section.id](data))
+    .map((section, position) => {
       const Section = RENDERERS[section.id];
-      return <Section key={section.id} data={data} />;
+      return <Section key={section.id} data={data} index={position + 1} today={today} />;
     });
 }

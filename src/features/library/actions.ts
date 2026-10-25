@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { playthroughChangeForStatus } from "@/features/playthroughs/lib";
 import { fail, ok, validationError, type ActionResult } from "@/lib/action-result";
 import { requireUser } from "@/lib/auth";
@@ -49,6 +50,7 @@ export async function addIgdbGame(input: AddIgdbGameInput): Promise<ActionResult
   if (error) return fail(error.code === "23505" ? "Esse jogo já está na biblioteca" : error.message);
 
   revalidatePath("/library");
+  revalidatePath("/board");
   return ok({ entryId: entry.id });
 }
 
@@ -81,6 +83,7 @@ export async function createManualGame(input: CreateManualGameInput): Promise<Ac
   if (error) return fail(error.message);
 
   revalidatePath("/library");
+  revalidatePath("/board");
   return ok({ entryId: entry.id });
 }
 
@@ -100,10 +103,23 @@ export async function updateEntry(input: UpdateEntryInput): Promise<ActionResult
 
   const { data: current, error: currentError } = await supabase
     .from("library_entries")
-    .select("status, playthroughs(id, finished_on, created_at)")
+    .select("user_id, status, is_favorite, playthroughs(id, finished_on, created_at)")
     .eq("id", id)
     .single();
   if (currentError) return fail(currentError.message);
+
+  if (isFavorite === false) patch.favorite_position = null;
+  if (isFavorite && !current.is_favorite) {
+    const { data: last } = await supabase
+      .from("library_entries")
+      .select("favorite_position")
+      .eq("user_id", current.user_id)
+      .eq("is_favorite", true)
+      .order("favorite_position", { ascending: false, nullsFirst: false })
+      .limit(1)
+      .maybeSingle();
+    patch.favorite_position = (last?.favorite_position ?? 0) + 1;
+  }
 
   const { error } = await supabase.from("library_entries").update(patch).eq("id", id);
   if (error) return fail(error.message);
@@ -169,5 +185,30 @@ export async function setCustomCover(input: { id: string; path: string | null })
 
   revalidatePath("/library");
   revalidatePath(`/games/${parsed.data.id}`);
+  return ok();
+}
+
+const favoriteOrderSchema = z.array(z.uuid()).max(100);
+
+export async function reorderFavorites(ids: string[]): Promise<ActionResult> {
+  await requireUser();
+  const parsed = favoriteOrderSchema.safeParse(ids);
+  if (!parsed.success) return validationError(parsed.error);
+
+  const supabase = await createClient();
+  const results = await Promise.all(
+    parsed.data.map((id, index) =>
+      supabase
+        .from("library_entries")
+        .update({ favorite_position: index + 1 })
+        .eq("id", id)
+        .eq("is_favorite", true),
+    ),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) return fail(failed.error.message);
+
+  revalidatePath("/settings/profile");
+  revalidatePath("/u/[username]", "page");
   return ok();
 }

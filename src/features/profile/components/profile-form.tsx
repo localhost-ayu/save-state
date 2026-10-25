@@ -13,6 +13,7 @@ import { saveProfile, setProfileImage } from "../actions";
 import type { MyProfileSettings } from "../queries";
 import type { ProfileLink } from "../schemas";
 import { PROFILE_SECTIONS, moveSection, type ProfileSection } from "../sections";
+import { FavoritesOrder } from "./favorites-order";
 
 const MAX_LINKS = 6;
 
@@ -74,7 +75,7 @@ function ImagePicker({ kind, path, title }: { kind: "avatar" | "banner"; path: s
         )}
       </div>
       {error && (
-        <p role="alert" className="text-sm text-red-400">
+        <p role="alert" className="text-sm font-medium text-text">
           {error}
         </p>
       )}
@@ -91,7 +92,7 @@ function ImagePicker({ kind, path, title }: { kind: "avatar" | "banner"; path: s
   );
 }
 
-export function ProfileForm({ profile, entries }: MyProfileSettings) {
+export function ProfileForm({ profile, entries, favorites }: MyProfileSettings) {
   const [username, setUsername] = useState(profile.username);
   const [displayName, setDisplayName] = useState(profile.display_name ?? "");
   const [tagline, setTagline] = useState(profile.tagline ?? "");
@@ -155,7 +156,7 @@ export function ProfileForm({ profile, entries }: MyProfileSettings) {
               onChange={(event) => setBio(event.target.value)}
               maxLength={1000}
               rows={4}
-              className="rounded-control border border-border bg-surface-solid p-3 text-text"
+              className="rounded-control border border-border-strong bg-surface-solid p-3 text-text"
             />
           </label>
         </Section>
@@ -195,6 +196,10 @@ export function ProfileForm({ profile, entries }: MyProfileSettings) {
               + Adicionar link
             </Button>
           )}
+        </Section>
+
+        <Section title="Ordem dos favoritos">
+          <FavoritesOrder favorites={favorites} />
         </Section>
 
         <Section title="Seções do perfil">
@@ -248,9 +253,9 @@ export function ProfileForm({ profile, entries }: MyProfileSettings) {
             <select
               value={featuredEntryId}
               onChange={(event) => setFeaturedEntryId(event.target.value)}
-              className="h-10 rounded-control border border-border bg-surface-solid px-2 text-text"
+              className="h-10 rounded-control border border-border-strong bg-surface-solid px-2 text-text"
             >
-              <option value="">Automático (o último Iniciado)</option>
+              <option value="">Automático (o último em Jogando)</option>
               {entries.map((entry) => (
                 <option key={entry.id} value={entry.id}>
                   {entry.game.title} · {STATUS_LABELS[entry.status]}
@@ -292,7 +297,7 @@ export function ProfileForm({ profile, entries }: MyProfileSettings) {
             </Link>
           </div>
           {message && (
-            <p role="status" className={cn("text-sm", message.ok ? "text-muted" : "text-red-400")}>
+            <p role="status" className={cn("text-sm", message.ok ? "text-muted" : "font-medium text-text")}>
               {message.text}
             </p>
           )}

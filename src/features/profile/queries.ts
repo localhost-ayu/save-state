@@ -9,7 +9,10 @@ import type { ProfileLink } from "./schemas";
 import { normalizeSections } from "./sections";
 
 const PROFILE_FIELDS =
-  "id, username, display_name, tagline, bio, links, avatar_path, banner_path, theme, sections, featured_entry_id, is_public";
+  "id, username, display_name, tagline, bio, links, avatar_path, banner_path, theme, sections, featured_entry_id, is_public, created_at";
+
+const byFavoritePosition = (a: { favorite_position: number | null }, b: { favorite_position: number | null }) =>
+  (a.favorite_position ?? Number.MAX_SAFE_INTEGER) - (b.favorite_position ?? Number.MAX_SAFE_INTEGER);
 
 function parseLinks(value: unknown): ProfileLink[] {
   return Array.isArray(value)
@@ -27,7 +30,7 @@ export async function getMyProfileSettings() {
     supabase.from("profiles").select(PROFILE_FIELDS).eq("id", user.id).single(),
     supabase
       .from("library_entries")
-      .select("id, status, game:games!inner(title)")
+      .select("id, status, is_favorite, favorite_position, custom_cover_path, game:games!inner(title, cover_url)")
       .eq("user_id", user.id)
       .order("status_changed_at", { ascending: false }),
   ]);
@@ -41,6 +44,7 @@ export async function getMyProfileSettings() {
       theme: parseTheme(profile.theme),
     },
     entries: entries ?? [],
+    favorites: (entries ?? []).filter((entry) => entry.is_favorite).sort(byFavoritePosition),
   };
 }
 
@@ -67,13 +71,13 @@ export async function getPublicProfile(username: string) {
     supabase
       .from("library_entries")
       .select(
-        "id, status, platform, is_platinum, is_favorite, custom_cover_path, status_changed_at, game:games!inner(title, cover_url)",
+        "id, status, platform, rating, is_platinum, is_favorite, favorite_position, custom_cover_path, status_changed_at, game:games!inner(title, cover_url)",
       )
       .eq("user_id", profile.id)
       .order("status_changed_at", { ascending: false }),
     supabase
       .from("playthroughs")
-      .select("library_entry_id, started_on, finished_on, outcome, hours")
+      .select("library_entry_id, started_on, finished_on, finished_precision, outcome, hours")
       .eq("user_id", profile.id)
       .order("finished_on", { ascending: false, nullsFirst: false }),
     supabase
@@ -94,6 +98,22 @@ export async function getPublicProfile(username: string) {
   for (const result of [entries, playthroughs, reviews, screenshots]) if (result.error) throw result.error;
 
   const library = entries.data ?? [];
+  const featuredEntry = profile.featured_entry_id
+    ? library.find((entry) => entry.id === profile.featured_entry_id)
+    : undefined;
+  const nowPlaying = featuredEntry ?? library.find((entry) => entry.status === "playing") ?? null;
+
+  const { data: lastNote } = nowPlaying
+    ? await supabase
+        .from("journal_entries")
+        .select("body, entry_date")
+        .eq("library_entry_id", nowPlaying.id)
+        .eq("is_private", false)
+        .order("entry_date", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
+
   const byId = new Map(library.map((entry) => [entry.id, entry]));
   const allPlaythroughs = playthroughs.data ?? [];
   const finishedIds = [
@@ -103,7 +123,6 @@ export async function getPublicProfile(username: string) {
         .map((p) => p.library_entry_id),
     ),
   ];
-  const featured = profile.featured_entry_id ? byId.get(profile.featured_entry_id) : undefined;
 
   return {
     isOwner,
@@ -114,9 +133,29 @@ export async function getPublicProfile(username: string) {
       sections: normalizeSections(profile.sections),
       theme: parseTheme(profile.theme),
     },
-    nowPlaying: featured ?? library.find((entry) => entry.status === "playing") ?? null,
-    favorites: library.filter((entry) => entry.is_favorite).slice(0, 8),
-    finishedYear: finishedIds.flatMap((id) => byId.get(id) ?? []),
+    nowPlaying: nowPlaying && {
+      ...nowPlaying,
+      currentHours: totalHours(allPlaythroughs.filter((p) => p.library_entry_id === nowPlaying.id && !p.finished_on)),
+      lastNote,
+    },
+    favorites: library
+      .filter((entry) => entry.is_favorite)
+      .sort(byFavoritePosition)
+      .slice(0, 10),
+    finishedYear: finishedIds.flatMap((id) => {
+      const entry = byId.get(id);
+      if (!entry) return [];
+      const runs = allPlaythroughs.filter((p) => p.library_entry_id === id && p.outcome === "completed");
+      return [{ ...entry, finishedOn: runs[0]?.finished_on ?? null, hours: totalHours(runs) }];
+    }),
+    totals: {
+      games: library.length,
+      finished: new Set([
+        ...allPlaythroughs.filter((p) => p.outcome === "completed").map((p) => p.library_entry_id),
+        ...library.filter((entry) => entry.status === "completed").map((entry) => entry.id),
+      ]).size,
+      platinums: library.filter((entry) => entry.is_platinum).length,
+    },
     stats: {
       finished: finishedIds.length,
       platinums: library.filter((entry) => entry.is_platinum).length,
