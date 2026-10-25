@@ -5,12 +5,14 @@ import { playthroughChangeForStatus } from "@/features/playthroughs/lib";
 import { fail, ok, validationError, type ActionResult } from "@/lib/action-result";
 import { requireUser } from "@/lib/auth";
 import { todayIso } from "@/lib/dates";
+import { MEDIA_BUCKET, isOwnMediaPath } from "@/lib/media";
 import { getGameById, searchGames, type IgdbGame } from "@/lib/integrations/igdb/client";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesUpdate } from "@/types/database";
 import {
   addIgdbGameSchema,
   createManualGameSchema,
+  customCoverSchema,
   updateEntrySchema,
   type AddIgdbGameInput,
   type CreateManualGameInput,
@@ -87,12 +89,11 @@ export async function updateEntry(input: UpdateEntryInput): Promise<ActionResult
   const parsed = updateEntrySchema.safeParse(input);
   if (!parsed.success) return validationError(parsed.error);
 
-  const { id, isPlatinum, isFavorite, playtimeMinutes, ...rest } = parsed.data;
+  const { id, isPlatinum, isFavorite, ...rest } = parsed.data;
   const patch: TablesUpdate<"library_entries"> = {
     ...rest,
     ...(isPlatinum !== undefined && { is_platinum: isPlatinum }),
     ...(isFavorite !== undefined && { is_favorite: isFavorite }),
-    ...(playtimeMinutes !== undefined && { playtime_minutes: playtimeMinutes }),
   };
 
   const supabase = await createClient();
@@ -133,10 +134,40 @@ export async function updateEntry(input: UpdateEntryInput): Promise<ActionResult
 export async function removeEntry(id: string): Promise<ActionResult> {
   await requireUser();
   const supabase = await createClient();
+
+  const { data: entry } = await supabase
+    .from("library_entries")
+    .select("custom_cover_path, screenshots(storage_path)")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("library_entries").delete().eq("id", id);
   if (error) return fail(error.message);
 
+  const files = [entry?.custom_cover_path, ...(entry?.screenshots ?? []).map((shot) => shot.storage_path)].filter(
+    (path): path is string => Boolean(path),
+  );
+  if (files.length > 0) await supabase.storage.from(MEDIA_BUCKET).remove(files);
+
   revalidatePath("/library");
   revalidatePath("/board");
+  return ok();
+}
+
+export async function setCustomCover(input: { id: string; path: string | null }): Promise<ActionResult> {
+  const user = await requireUser();
+  const parsed = customCoverSchema.safeParse(input);
+  if (!parsed.success) return validationError(parsed.error);
+  if (parsed.data.path && !isOwnMediaPath(user.id, parsed.data.path, "covers")) return fail("Arquivo inválido");
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("library_entries")
+    .update({ custom_cover_path: parsed.data.path, cover_crop: null })
+    .eq("id", parsed.data.id);
+  if (error) return fail(error.message);
+
+  revalidatePath("/library");
+  revalidatePath(`/games/${parsed.data.id}`);
   return ok();
 }
