@@ -71,14 +71,14 @@ isOneToOne: false
                   ]
                 },"library_entries": {
                   Row: {
-                    "board_position": number,"cover_crop": Json | null,"created_at": string,"custom_cover_path": string | null,"game_id": string,"id": string,"is_favorite": boolean,"is_platinum": boolean,"ownership": (Database["public"]['Enums']["ownership_type"])[],"platform": string | null,"playtime_minutes": number | null,"rating": number | null,"status": Database["public"]['Enums']["game_status"],"status_changed_at": string,"updated_at": string,"user_id": string
+                    "board_position": number,"cover_crop": Json | null,"created_at": string,"custom_cover_path": string | null,"expectation": number | null,"game_id": string,"id": string,"is_favorite": boolean,"is_platinum": boolean,"ownership": (Database["public"]['Enums']["ownership_type"])[],"platform": string | null,"priority": number,"rating": number | null,"status": Database["public"]['Enums']["game_status"],"status_changed_at": string,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"game_id": string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"playtime_minutes"?: number | null,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
+                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"game_id": string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
                   }
                   Update: {
-                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"game_id"?: string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"playtime_minutes"?: number | null,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
+                    "board_position"?: number,"cover_crop"?: Json | null,"created_at"?: string,"custom_cover_path"?: string | null,"expectation"?: number | null,"game_id"?: string,"id"?: string,"is_favorite"?: boolean,"is_platinum"?: boolean,"ownership"?: (Database["public"]['Enums']["ownership_type"])[],"platform"?: string | null,"priority"?: number,"rating"?: number | null,"status"?: Database["public"]['Enums']["game_status"],"status_changed_at"?: string,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -97,14 +97,14 @@ isOneToOne: false
                   ]
                 },"playthroughs": {
                   Row: {
-                    "created_at": string,"finished_on": string | null,"finished_precision": Database["public"]['Enums']["date_precision"],"id": string,"library_entry_id": string,"notes": string | null,"outcome": Database["public"]['Enums']["game_status"] | null,"started_on": string | null,"started_precision": Database["public"]['Enums']["date_precision"],"updated_at": string,"user_id": string
+                    "created_at": string,"finished_on": string | null,"finished_precision": Database["public"]['Enums']["date_precision"],"hours": number | null,"id": string,"library_entry_id": string,"notes": string | null,"outcome": Database["public"]['Enums']["game_status"] | null,"started_on": string | null,"started_precision": Database["public"]['Enums']["date_precision"],"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"finished_on"?: string | null,"finished_precision"?: Database["public"]['Enums']["date_precision"],"id"?: string,"library_entry_id": string,"notes"?: string | null,"outcome"?: Database["public"]['Enums']["game_status"] | null,"started_on"?: string | null,"started_precision"?: Database["public"]['Enums']["date_precision"],"updated_at"?: string,"user_id"?: string
+                    "created_at"?: string,"finished_on"?: string | null,"finished_precision"?: Database["public"]['Enums']["date_precision"],"hours"?: number | null,"id"?: string,"library_entry_id": string,"notes"?: string | null,"outcome"?: Database["public"]['Enums']["game_status"] | null,"started_on"?: string | null,"started_precision"?: Database["public"]['Enums']["date_precision"],"updated_at"?: string,"user_id"?: string
                   }
                   Update: {
-                    "created_at"?: string,"finished_on"?: string | null,"finished_precision"?: Database["public"]['Enums']["date_precision"],"id"?: string,"library_entry_id"?: string,"notes"?: string | null,"outcome"?: Database["public"]['Enums']["game_status"] | null,"started_on"?: string | null,"started_precision"?: Database["public"]['Enums']["date_precision"],"updated_at"?: string,"user_id"?: string
+                    "created_at"?: string,"finished_on"?: string | null,"finished_precision"?: Database["public"]['Enums']["date_precision"],"hours"?: number | null,"id"?: string,"library_entry_id"?: string,"notes"?: string | null,"outcome"?: Database["public"]['Enums']["game_status"] | null,"started_on"?: string | null,"started_precision"?: Database["public"]['Enums']["date_precision"],"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -123,17 +123,23 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "accent_color": string | null,"avatar_path": string | null,"background_path": string | null,"banner_path": string | null,"bio": string | null,"created_at": string,"display_name": string | null,"id": string,"is_public": boolean,"theme": NonNullable<Json>,"updated_at": string,"username": string
+                    "accent_color": string | null,"avatar_path": string | null,"background_path": string | null,"banner_path": string | null,"bio": string | null,"created_at": string,"display_name": string | null,"featured_entry_id": string | null,"id": string,"is_public": boolean,"links": NonNullable<Json>,"sections": NonNullable<Json>,"tagline": string | null,"theme": NonNullable<Json>,"updated_at": string,"username": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accent_color"?: string | null,"avatar_path"?: string | null,"background_path"?: string | null,"banner_path"?: string | null,"bio"?: string | null,"created_at"?: string,"display_name"?: string | null,"id": string,"is_public"?: boolean,"theme"?: NonNullable<Json>,"updated_at"?: string,"username": string
+                    "accent_color"?: string | null,"avatar_path"?: string | null,"background_path"?: string | null,"banner_path"?: string | null,"bio"?: string | null,"created_at"?: string,"display_name"?: string | null,"featured_entry_id"?: string | null,"id": string,"is_public"?: boolean,"links"?: NonNullable<Json>,"sections"?: NonNullable<Json>,"tagline"?: string | null,"theme"?: NonNullable<Json>,"updated_at"?: string,"username": string
                   }
                   Update: {
-                    "accent_color"?: string | null,"avatar_path"?: string | null,"background_path"?: string | null,"banner_path"?: string | null,"bio"?: string | null,"created_at"?: string,"display_name"?: string | null,"id"?: string,"is_public"?: boolean,"theme"?: NonNullable<Json>,"updated_at"?: string,"username"?: string
+                    "accent_color"?: string | null,"avatar_path"?: string | null,"background_path"?: string | null,"banner_path"?: string | null,"bio"?: string | null,"created_at"?: string,"display_name"?: string | null,"featured_entry_id"?: string | null,"id"?: string,"is_public"?: boolean,"links"?: NonNullable<Json>,"sections"?: NonNullable<Json>,"tagline"?: string | null,"theme"?: NonNullable<Json>,"updated_at"?: string,"username"?: string
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "profiles_featured_entry_id_fkey"
+      columns: ["featured_entry_id"]
+isOneToOne: false
+      referencedRelation: "library_entries"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"reviews": {
                   Row: {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { GameStatus, OwnershipType } from "@/types/database";
 import { removeEntry, updateEntry } from "../actions";
-import { GAME_STATUSES, OWNERSHIP_LABELS, OWNERSHIP_TYPES, STATUS_LABELS } from "../constants";
+import { GAME_STATUSES, OWNERSHIP_LABELS, OWNERSHIP_TYPES, PRIORITY_LABELS, STATUS_LABELS } from "../constants";
 import type { EntryDetail } from "../queries";
 import { PlatinumTrophy } from "./platinum-trophy";
 
@@ -51,9 +51,45 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               type="button"
               aria-pressed={entry.status === status}
               onClick={() => save({ status })}
-              className="rounded-full border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
             >
               {STATUS_LABELS[status]}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-2" disabled={pending}>
+        <legend className="mb-2 text-sm font-medium">Expectativa</legend>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {Array.from({ length: 10 }, (_, index) => index + 1).map((value) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={entry.expectation === value}
+              aria-label={`Expectativa ${value} de 10`}
+              onClick={() => save({ expectation: entry.expectation === value ? null : value })}
+              className="size-9 rounded-control border border-border font-label text-sm aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+            >
+              {value}
+            </button>
+          ))}
+          <span className="ml-1 text-xs text-muted">Quanto você quer jogar. Clique de novo para limpar.</span>
+        </div>
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-2" disabled={pending}>
+        <legend className="mb-2 text-sm font-medium">Prioridade na roleta</legend>
+        <div className="flex flex-wrap gap-2">
+          {PRIORITY_LABELS.map((label, priority) => (
+            <button
+              key={label}
+              type="button"
+              aria-pressed={entry.priority === priority}
+              onClick={() => save({ priority })}
+              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:text-accent"
+            >
+              {label}
             </button>
           ))}
         </div>
@@ -68,7 +104,7 @@ export function EntryEditor({ entry }: { entry: EntryDetail }) {
               type="button"
               aria-pressed={entry.ownership.includes(type)}
               onClick={() => toggleOwnership(type)}
-              className="rounded-full border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:text-accent"
+              className="rounded-pill border border-border px-3 py-1 text-sm aria-pressed:border-accent aria-pressed:text-accent"
             >
               {OWNERSHIP_LABELS[type]}
             </button>

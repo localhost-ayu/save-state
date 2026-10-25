@@ -5,9 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 import type { GameStatus } from "@/types/database";
 
 const ENTRY_FIELDS = `
-  id, status, platform, ownership, rating, is_platinum, is_favorite,
-  playtime_minutes, custom_cover_path, cover_crop, board_position, updated_at,
-  game:games!inner(id, title, cover_url, release_date, platforms)
+  id, status, platform, ownership, rating, is_platinum, is_favorite, priority,
+  expectation, custom_cover_path, cover_crop, board_position, updated_at,
+  game:games!inner(id, title, cover_url, release_date, platforms),
+  playthroughs(started_on, started_precision, finished_on, hours)
 `;
 
 export type LibraryFilters = { status?: GameStatus; search?: string };
@@ -40,16 +41,19 @@ export async function getEntryDetail(id: string) {
   const { data, error } = await supabase
     .from("library_entries")
     .select(
-      `id, status, platform, ownership, rating, is_platinum, is_favorite, playtime_minutes, created_at,
+      `id, status, platform, ownership, rating, is_platinum, is_favorite, expectation, priority,
+       custom_cover_path, created_at,
        game:games!inner(id, source, title, summary, cover_url, release_date, platforms, genres, franchise),
        review:reviews(body, is_private, updated_at),
-       playthroughs(id, started_on, started_precision, finished_on, finished_precision, outcome, notes),
-       journal_entries(id, entry_date, title, body, is_private, created_at)`,
+       playthroughs(id, started_on, started_precision, finished_on, finished_precision, outcome, notes, hours),
+       journal_entries(id, entry_date, title, body, is_private, created_at),
+       screenshots(id, storage_path, caption, journal_entry_id, is_private, width, height, created_at)`,
     )
     .eq("id", id)
     .eq("user_id", user.id)
     .order("started_on", { referencedTable: "playthroughs", ascending: false, nullsFirst: false })
     .order("entry_date", { referencedTable: "journal_entries", ascending: false })
+    .order("created_at", { referencedTable: "screenshots", ascending: true })
     .maybeSingle();
   if (error) throw error;
   return data;

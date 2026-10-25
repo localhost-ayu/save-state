@@ -28,7 +28,13 @@ export const updateEntrySchema = z.object({
   rating: rating.nullable().optional(),
   isPlatinum: z.boolean().optional(),
   isFavorite: z.boolean().optional(),
-  playtimeMinutes: z.number().int().min(0).nullable().optional(),
+  expectation: z.number().int().min(1).max(10).nullable().optional(),
+  priority: z.number().int().min(0).max(2).optional(),
+});
+
+export const customCoverSchema = z.object({
+  id: z.uuid(),
+  path: z.string().max(300).nullable(),
 });
 
 export type AddIgdbGameInput = z.input<typeof addIgdbGameSchema>;
