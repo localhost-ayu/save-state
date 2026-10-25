@@ -5,15 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { EntryDetail } from "@/features/library/queries";
 import { formatPartialDate } from "@/features/timeline/lib";
+import { mediaUrl } from "@/lib/media";
 import { addJournalEntry, deleteJournalEntry } from "../actions";
 
 export function JournalSection({
   entryId,
   entries,
+  screenshots,
   today,
 }: {
   entryId: string;
   entries: EntryDetail["journal_entries"];
+  screenshots: EntryDetail["screenshots"];
   today: string;
 }) {
   const [entryDate, setEntryDate] = useState(today);
@@ -38,7 +41,7 @@ export function JournalSection({
     <section className="flex flex-col gap-4">
       <h2 className="font-medium">Diário</h2>
 
-      <form onSubmit={submit} className="flex flex-col gap-2 rounded-card border border-border bg-surface p-3">
+      <form onSubmit={submit} className="flex flex-col gap-2 rounded-card surface p-3 text-text">
         <div className="flex gap-2">
           <Input
             type="date"
@@ -54,7 +57,7 @@ export function JournalSection({
           onChange={(event) => setBody(event.target.value)}
           rows={4}
           placeholder="Onde parei, o que senti, o que aconteceu…"
-          className="w-full rounded-lg border border-border bg-surface p-3 text-sm focus-visible:outline-2 focus-visible:outline-accent"
+          className="w-full rounded-control border border-border bg-surface-solid p-3 text-sm text-text focus-visible:outline-2 focus-visible:outline-accent"
         />
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm">
@@ -96,6 +99,22 @@ export function JournalSection({
               </div>
               {entry.title && <h3 className="font-medium">{entry.title}</h3>}
               <p className="text-sm whitespace-pre-line">{entry.body}</p>
+              {screenshots.some((shot) => shot.journal_entry_id === entry.id) && (
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {screenshots
+                    .filter((shot) => shot.journal_entry_id === entry.id)
+                    .map((shot) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={shot.id}
+                        src={mediaUrl(shot.storage_path)}
+                        alt={shot.caption ?? "Screenshot"}
+                        loading="lazy"
+                        className="h-20 w-32 rounded-control object-cover"
+                      />
+                    ))}
+                </div>
+              )}
             </li>
           ))}
         </ol>
