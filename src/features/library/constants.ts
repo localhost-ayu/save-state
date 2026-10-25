@@ -33,3 +33,5 @@ export const OWNERSHIP_LABELS: Record<OwnershipType, string> = {
   alternative: "Métodos alternativos",
   subscription: "Assinatura",
 };
+
+export const PRIORITY_LABELS = ["Baixa", "Normal", "Alta"] as const;
