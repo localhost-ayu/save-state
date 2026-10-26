@@ -208,7 +208,7 @@ function Column({
       ref={setNodeRef}
       aria-label={STATUS_LABELS[status]}
       className={cn(
-        "w-full flex-col gap-2 rounded-card surface p-2.5 text-text transition sm:flex sm:min-w-60 sm:flex-1 sm:basis-0",
+        "w-full flex-col gap-2 rounded-card surface p-2.5 text-text transition sm:flex sm:max-h-[max(24rem,calc(100dvh-17rem))] sm:min-w-60 sm:flex-1 sm:basis-0",
         selected ? "flex" : "hidden",
         isOver && "ring-2 ring-accent",
       )}
@@ -258,7 +258,7 @@ function Column({
           {searching ? "Nada encontrado aqui." : EMPTY_HINTS[status]}
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex [scrollbar-width:thin] flex-col gap-2 sm:-mr-1.5 sm:min-h-0 sm:overflow-y-auto sm:overscroll-contain sm:pr-1.5">
           {entries.map((entry) => (
             <Card key={entry.id} entry={entry} density={density} />
           ))}
