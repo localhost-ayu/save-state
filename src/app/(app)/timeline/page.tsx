@@ -9,6 +9,18 @@ import { cn } from "@/lib/cn";
 
 export const metadata: Metadata = { title: "Linha do tempo" };
 
+const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+function MonthGrid() {
+  return (
+    <div className="pointer-events-none absolute inset-0 grid grid-cols-12" aria-hidden="true">
+      {MONTHS.map((month) => (
+        <span key={month} className="border-l border-border first:border-l-0" />
+      ))}
+    </div>
+  );
+}
+
 async function Timeline({ searchParams }: PageProps<"/timeline">) {
   const { year: yearParam } = await searchParams;
   await connection();
@@ -36,13 +48,27 @@ async function Timeline({ searchParams }: PageProps<"/timeline">) {
         <p className="py-12 text-center text-muted">Nenhum jogo com datas registradas em {year}.</p>
       ) : (
         <ol className="flex flex-col gap-3">
+          <li className="grid grid-cols-[minmax(0,10rem)_1fr] gap-3" aria-hidden="true">
+            <span />
+            <div className="grid grid-cols-12 font-label text-[10px] tracking-[0.08em] text-muted uppercase">
+              {MONTHS.map((month) => (
+                <span key={month} className="truncate pl-1">
+                  {month}
+                </span>
+              ))}
+            </div>
+          </li>
           {items.map((item) => (
             <li key={item.id} className="grid grid-cols-[minmax(0,10rem)_1fr] items-center gap-3">
-              <span className="flex items-center gap-1 truncate text-sm">
-                {item.entry.game.title}
+              <Link
+                href={`/games/${item.entry.id}`}
+                className="flex min-w-0 items-center gap-1 text-sm hover:underline"
+              >
+                <span className="truncate">{item.entry.game.title}</span>
                 {item.entry.is_platinum && <PlatinumTrophy className="size-3.5 shrink-0 text-platinum" />}
-              </span>
-              <div className="relative h-6 rounded bg-surface-raised">
+              </Link>
+              <div className="relative h-6 overflow-hidden rounded bg-surface-raised">
+                <MonthGrid />
                 <div
                   title={`${formatPartialDate({ date: item.started_on, precision: item.started_precision })} – ${formatPartialDate({ date: item.finished_on, precision: item.finished_precision })}`}
                   className={cn(

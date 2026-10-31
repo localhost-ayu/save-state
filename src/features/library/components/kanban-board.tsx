@@ -411,7 +411,7 @@ export function KanbanBoard({ entries }: { entries: LibraryEntry[] }) {
         </p>
       )}
 
-      <div className="flex items-start gap-3 overflow-x-auto pb-4">
+      <div className="flex items-start gap-3 overflow-x-auto pb-24 sm:pb-4">
         {GAME_STATUSES.map((status) =>
           collapsed.includes(status) && mobileColumn !== status ? (
             <CollapsedColumn

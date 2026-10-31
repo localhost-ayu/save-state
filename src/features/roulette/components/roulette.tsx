@@ -75,6 +75,8 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
   }
 
   const shown = result ?? highlight;
+  const top = [...candidates].sort((a, b) => b.priority - a.priority).slice(0, 3);
+  const preview = top.length === 3 ? [top[1], top[0], top[2]] : top;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -150,7 +152,7 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
       <section
         aria-live="polite"
         className={cn(
-          "flex flex-col items-center gap-4 rounded-card surface p-6 text-center text-text",
+          "flex flex-col items-center gap-4 self-start rounded-card surface p-6 text-center text-text lg:sticky lg:top-24",
           result && "border-accent",
         )}
       >
@@ -188,9 +190,34 @@ export function Roulette({ entries }: { entries: LibraryEntry[] }) {
             {message && <p className="text-sm text-muted">{message}</p>}
           </>
         ) : (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16">
-            <span className="font-display text-xl font-bold">Qual a próxima aventura?</span>
-            <span className="text-sm text-muted">Escolha os status e gire.</span>
+          <div className="flex flex-col items-center gap-5 py-6">
+            {preview.length > 0 && (
+              <div className="flex h-44 items-center justify-center" aria-hidden="true">
+                {preview.map((entry, index) => (
+                  <GameCover
+                    key={entry.id}
+                    title={entry.game.title}
+                    coverUrl={entry.game.cover_url}
+                    customCoverPath={entry.custom_cover_path}
+                    sizes="112px"
+                    className={cn(
+                      "w-28 rounded-[calc(var(--card-radius)*0.6)] shadow-xl",
+                      index === 0 && "z-0 -mr-10 -rotate-8 opacity-80",
+                      index === 1 && "z-10 scale-110",
+                      index === 2 && "z-0 -ml-10 rotate-8 opacity-80",
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="font-display text-xl font-bold">Qual a próxima aventura?</span>
+              <span className="text-sm text-muted">
+                {candidates.length === 0
+                  ? "Ajuste os filtros para ter jogos concorrendo."
+                  : "Escolha os status e gire."}
+              </span>
+            </div>
           </div>
         )}
       </section>
