@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { AddGame } from "@/features/library/components/add-game";
 import { GameCard } from "@/features/library/components/game-card";
@@ -34,11 +35,17 @@ async function Library({ searchParams }: PageProps<"/library">) {
 
   return (
     <>
-      <div className="flex items-baseline gap-3">
+      <div className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-display text-3xl font-bold">Biblioteca</h1>
         <span className="rounded-[6px] scrim px-2 py-0.5 font-label text-xs text-page-muted">
           {all.length} {all.length === 1 ? "JOGO" : "JOGOS"}
         </span>
+        <Link
+          href="/library/finished"
+          className="ml-auto rounded-control scrim px-3 py-1.5 text-sm text-page-muted hover:text-page"
+        >
+          Galeria de finalizados →
+        </Link>
       </div>
       <div className="flex flex-col gap-3.5 rounded-card scrim p-3.5">
         <AddGame />
