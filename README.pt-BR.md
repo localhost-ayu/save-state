@@ -21,6 +21,8 @@ Backloggd e MyAnimeList são ótimos para catalogar, mas são iguais para todo m
 - **Perfil público** montado com módulos que você reordena e esconde: jogando agora, números do ano, favoritos numerados (arraste para reordenar), finalizados do ano, reviews recentes e galeria.
 - **Editor de tema**: cor ou imagem de fundo com escurecimento e desfoque, cor e opacidade dos cards, liquid glass, cantos de retos a arredondados, cor de destaque e tipografia. As cores de texto são calculadas a partir do fundo, e o seletor de cor confere o contraste antes de salvar.
 - **Capas personalizadas** com recorte no formato do card.
+- **Galeria de finalizados**: todos os jogos zerados, agrupados pelo ano em que você terminou, com nota e horas.
+- **Instalável** na tela inicial do celular, e você pode excluir sua conta e tudo o que há nela pelos ajustes.
 
 ## Prints
 
@@ -38,14 +40,10 @@ Backloggd e MyAnimeList são ótimos para catalogar, mas são iguais para todo m
 
 ## Refinos para a v1
 
-O que está sendo finalizado antes da primeira versão pública:
+O que falta antes da primeira versão pública:
 
 - Deploy de produção na Vercel com um projeto Supabase hospedado.
-- PWA instalável, para abrir como app no celular.
-- Galeria de finalizados.
-- Exclusão de conta pelo próprio usuário (hoje é feita por e-mail).
-- Revisão visual de todos os temas prontos (Papel e Vidro principalmente) e das telas pequenas, como o botão flutuante de adicionar cobrindo o último card.
-- Estados vazios mais ricos para o resultado da roleta e para a linha do tempo.
+- Revisão visual de todos os temas prontos, Papel e Vidro principalmente.
 
 ## Stack
 

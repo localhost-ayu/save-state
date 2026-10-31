@@ -21,6 +21,8 @@ Tools like Backloggd and MyAnimeList are great for cataloguing, but they look th
 - **Public profile** built from modules you can reorder and hide: now playing, yearly numbers, numbered favorites (drag to reorder), finished this year, recent reviews and a gallery.
 - **Theme editor**: background color or image with dim and blur, card color and opacity, liquid glass, corner radius from square to round, accent color and font family. Text colors are computed from the background, and the color picker checks contrast before you save.
 - **Custom covers** with cropping to the card's shape.
+- **Finished gallery**: every completed game grouped by the year you finished it, with rating and hours.
+- **Installable** on the phone's home screen, and you can delete your account and everything in it from the settings.
 
 ## Screenshots
 
@@ -38,14 +40,10 @@ Tools like Backloggd and MyAnimeList are great for cataloguing, but they look th
 
 ## Polishing for v1
 
-What is being finished before the first public release:
+What is left before the first public release:
 
 - Production deploy on Vercel with a hosted Supabase project.
-- Installable PWA, so it opens like an app on the phone.
-- Finished games gallery.
-- Self-service account deletion (today it is done by e-mail).
-- A visual pass over every theme preset (Paper and Glass especially) and on small screens, such as the floating add button covering the last card.
-- Richer empty states for the roulette result and the timeline.
+- A visual pass over every theme preset, Paper and Glass especially.
 
 ## Stack
 
