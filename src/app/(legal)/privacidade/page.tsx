@@ -92,8 +92,9 @@ export default function PrivacyPage() {
       <section>
         <h2>6. Por quanto tempo</h2>
         <p>
-          Os dados ficam guardados enquanto sua conta existir. Ao pedir a exclusão, tudo é apagado em até 30 dias,
-          exceto o que a lei obrigar a manter. Registros técnicos seguem os prazos dos provedores de hospedagem.
+          Os dados ficam guardados enquanto sua conta existir. Ao excluir a conta pelo app, tudo é apagado na hora,
+          incluindo as imagens enviadas, exceto o que a lei obrigar a manter. Registros técnicos seguem os prazos dos
+          provedores de hospedagem.
         </p>
       </section>
 
@@ -107,8 +108,9 @@ export default function PrivacyPage() {
           <li>pedir a exclusão da conta e de todo o conteúdo;</li>
         </ul>
         <p>
-          Enquanto a exportação e a exclusão não estão disponíveis direto no app, basta pedir por {email}. A resposta
-          sai em até 15 dias. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).
+          A exclusão fica em Ajustes → Perfil → Excluir conta. Para os demais pedidos, enquanto a exportação não está
+          disponível no app, basta escrever para {email}. A resposta sai em até 15 dias. Você também pode reclamar à
+          Autoridade Nacional de Proteção de Dados (ANPD).
         </p>
       </section>
 

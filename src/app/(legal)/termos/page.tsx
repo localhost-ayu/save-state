@@ -28,7 +28,10 @@ export default function TermsPage() {
         <ul>
           <li>O acesso é feito por link enviado ao seu e-mail. Quem controla o seu e-mail controla a sua conta.</li>
           <li>Se você tem menos de 18 anos, use o serviço com o conhecimento de um responsável.</li>
-          <li>Você pode pedir a exclusão da sua conta a qualquer momento pelo e-mail {email}.</li>
+          <li>
+            Você pode excluir sua conta a qualquer momento em Ajustes → Perfil → Excluir conta, ou pedir pelo e-mail{" "}
+            {email}.
+          </li>
         </ul>
       </section>
 

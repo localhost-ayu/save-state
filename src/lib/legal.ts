@@ -8,6 +8,6 @@ export const LEGAL = {
   licenseUrl: "https://polyformproject.org/licenses/noncommercial/1.0.0",
   commercialLicenseUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSdDZxbuVtGmUTse3OaSYWKVuH1QsPGMNQyQyKvCVgf5GCXvug/viewform?usp=dialog",
-  termsUpdatedAt: "24 de outubro de 2026",
-  privacyUpdatedAt: "24 de outubro de 2026",
+  termsUpdatedAt: "31 de outubro de 2026",
+  privacyUpdatedAt: "31 de outubro de 2026",
 } as const;
